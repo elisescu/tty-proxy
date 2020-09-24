@@ -1,0 +1,4 @@
+* Today
+
+On the proxy side I need to have a handler to read the HTTP request and get the session ID. But from there on I need to forward the same request (perhaps minus the session ID) over a mux/yamux to the tcp connection with the tty-share. 
+That will have to read it and pass it through the http server as it would do with a normal connection?
