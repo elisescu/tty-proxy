@@ -57,3 +57,7 @@ In the above command, `:3456` is the default port where `tty-proxy` listens for 
 connections (i.e. `tty-share` clients), and 5000 is the port of the web interface through which
 remote users can connect. You can override the defaults by specifying a different port mapping on
 the command line, e.g.  `-p 4567:3456 -p 80:8080` to listen on `4567` and serve on `80`.
+
+## nginx
+
+Take a look at [this snippet](doc/nginx.conf) to see how I configured my nginx installation for TLS termination.
