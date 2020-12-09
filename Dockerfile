@@ -10,10 +10,8 @@ COPY . /go/src/github.com/elisescu/tty-proxy
 
 RUN apk update && \
     apk add -u $build_deps $runtime_deps && \
-    adduser -D -H -h / -u $user_id tty-proxy
-
-
-RUN cd /go/src/github.com/elisescu/tty-proxy && \
+    adduser -D -H -h / -u $user_id tty-proxy && \
+    cd /go/src/github.com/elisescu/tty-proxy && \
     GOPATH=/go go get github.com/go-bindata/go-bindata/... && \
     GOPATH=/go /go/bin/go-bindata --prefix static -o gobindata.go static/* && \
     GOPATH=/go go build && \
