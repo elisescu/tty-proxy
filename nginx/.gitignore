@@ -1,3 +1,5 @@
 nginx.yaml
 nginx.conf
 
+/log/**
+
