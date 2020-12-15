@@ -1,0 +1,16 @@
+version: '2'
+services:
+  nginx:
+    image: nginx:latest
+    container_name: webserver
+    volumes:
+      - ./nginx/:/etc/nginx/
+      - ./nginx/log/:/var/log/nginx/
+      - /etc/letsencrypt/:/etc/letsencrypt/
+    ports:
+      - 80:80
+      - 443:443
+      - 3456:3456
+  tty-proxy:
+    container_name: tty-proxy
+    build: ./
