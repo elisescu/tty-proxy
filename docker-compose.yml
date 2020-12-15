@@ -1,18 +1,24 @@
 version: '2'
 services:
-  nginx:
-    build: ./nginx/
-    container_name: webserver
-    volumes:
-      - ./nginx/:/etc/nginx/
-      - ./nginx/log/:/var/log/nginx/
-      - /etc/letsencrypt/:/etc/letsencrypt/
-    ports:
-      - 80:80
-      - 443:443
-      - 3456:3456
+  # nginx:
+  #   image: nginx:latest
+  #   build: ./nginx/
+  #   container_name: webserver
+  #   volumes:
+  #     - ./nginx/:/etc/nginx/
+  #     - ./nginx/log/:/var/log/nginx/
+  #     - /etc/letsencrypt/:/etc/letsencrypt/
+  #   ports:
+  #     - "80:80"
+  #     - "443:443"
+  #     - "3456:3456"
+  #   command: [nginx-debug, '-g', 'daemon off;']
   tty-proxy:
     container_name: tty-proxy
     build: ./
     ports:
-      - 8080:8080
+      - "8080:8080"
+      - "6969:3456"
+    cap_drop:
+      - ALL
+
