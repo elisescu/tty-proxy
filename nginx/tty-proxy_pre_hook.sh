@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 
-docker-compose -f ~/projects/tty-proxy/docker-compose.yml down
+docker-compose -f ~/home/ubuntu/tty-proxy/docker-compose.yml down
 
