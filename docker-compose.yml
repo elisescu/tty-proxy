@@ -10,7 +10,7 @@ services:
     ports:
       - 80:80
       - 443:443
-      - 3456:3456
+      - 4567:4567
   tty-proxy:
     container_name: tty-proxy
     build: ./
