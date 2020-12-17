@@ -1,10 +1,12 @@
-version: '2'
+version: '3.7'
 services:
   nginx:
     build: ./nginx/
     container_name: webserver
     volumes:
-      - ./nginx/:/etc/nginx/
+      - type: bind
+        source: ./nginx/nginx.conf
+        target: /etc/nginx/nginx.conf
       - ./nginx/log/:/var/log/nginx/
       - /etc/letsencrypt/:/etc/letsencrypt/
     ports:
