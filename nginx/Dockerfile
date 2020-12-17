@@ -1,9 +1,9 @@
 FROM ruby as template
 ARG nginx_template_data=nginx.example.yaml
 
-RUN    echo "---" \
-    && echo "template_file: ${nginx_template_data}" \
-    && echo "---"
+RUN    echo "\e[31m---" \
+    && echo "template_file: ${nginx_template_data} #############" \
+    && echo "---\e[0m"
  
 ADD "./nginx.tmpl.conf" ${nginx_template_data} "/build/"
 RUN gem install mustache \
