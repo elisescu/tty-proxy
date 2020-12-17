@@ -1,10 +1,10 @@
 FROM ruby as template
 ARG nginx_template_data=nginx.example.yaml
 
-ADD "nginx.conf.tmpl" ${nginx_template_data} "/build/"
+ADD "./nginx.tmpl.conf" ${nginx_template_data} "/build/"
 RUN gem install mustache \
       && cd /build \
-      && mustache ${nginx_template_data} nginx.conf.tmpl > nginx.conf
+      && mustache ${nginx_template_data} nginx.tmpl.conf > nginx.conf
 
 
 FROM nginx:latest
