@@ -1,5 +1,8 @@
 version: '2'
 services:
+  nginx:
+    environment:
+      - URL=a_url_unused
   tty-proxy:
     environment:
       - URL=tty.example.com
