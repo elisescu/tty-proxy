@@ -1,8 +1,9 @@
 version: '3.7'
 services:
   nginx:
-    environment:
-      - URL=a_url_unused
+    build:
+      args:
+        nginx_template_data: nginx.yaml
   tty-proxy:
     environment:
       - URL=tty.example.com

@@ -1,7 +1,9 @@
 version: '3.7'
 services:
   nginx:
-    build: ./nginx/
+    build: 
+      context: ./nginx/
+    image: webserver
     container_name: webserver
     volumes:
       # - type: bind
