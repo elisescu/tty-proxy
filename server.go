@@ -205,6 +205,18 @@ func (s *server) serveContent(w http.ResponseWriter, r *http.Request, name strin
 
 func (s *server) handleFrontConnections() error {
 	router := mux.NewRouter()
+
+	router.Path("/s/{sessionID}").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		vars := mux.Vars(r)
+		sessionID := vars["sessionID"]
+
+		redirectPath := "/s/" + sessionID + "/"
+
+		log.Infof("Redirecting request from: %s | %s => %s", r.RemoteAddr, r.URL.Path, redirectPath)
+		http.Redirect(w, r, redirectPath, 301)
+	})
+
+
 	router.PathPrefix("/s/{sessionID}/").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		startTime := time.Now()
 		log.Infof("New front client connection: %s, from %s", r.URL.Path, r.RemoteAddr)
@@ -231,15 +243,6 @@ func (s *server) handleFrontConnections() error {
 	})
 
 
-  router.PathPrefix("/s/{sessionID}").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		vars := mux.Vars(r)
-		sessionID := vars["sessionID"]
-
-		redirectPath := "/s/" + sessionID + "/"
-
-		log.Infof("Redirecting request from: %s | %s => %s", r.RemoteAddr, r.URL.Path, redirectPath)
-		http.Redirect(w, r, redirectPath, 301)
-  })
 
 	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/",
 		http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -252,6 +255,16 @@ func (s *server) handleFrontConnections() error {
 
 	router.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "https://tty-share.com", http.StatusMovedPermanently)
+	})
+
+	// Add logging middleware
+	router.Use(func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			// Do stuff here
+			log.Debugf("Request from: %s for %s", r.RemoteAddr, r.URL)
+			// Call the next handler, which can be another middleware in the chain, or the final handler.
+			next.ServeHTTP(w, r)
+		})
 	})
 
 	s.httpServer = &http.Server{
