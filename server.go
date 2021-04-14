@@ -230,6 +230,17 @@ func (s *server) handleFrontConnections() error {
 		log.Infof("Front client request %s from %s proxied for %.2f sec", r.URL.Path, r.RemoteAddr,  duration.Seconds())
 	})
 
+
+  router.PathPrefix("/s/{sessionID}").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		vars := mux.Vars(r)
+		sessionID := vars["sessionID"]
+
+		redirectPath := "/s/" + sessionID + "/"
+
+		log.Infof("Redirecting request from: %s | %s => %s", r.RemoteAddr, r.URL.Path, redirectPath)
+		http.Redirect(w, r, redirectPath, 301)
+  })
+
 	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/",
 		http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			s.serveContent(w, r, r.URL.Path)
