@@ -227,7 +227,7 @@ func (s *server) handleFrontConnections() error {
 
 		mainHandler(w, r, backConn)
 		duration := time.Now().Sub(startTime)
-		log.Infof("Front client request %s from %s proxied for %.2f sec", r.URL.Path, r.RemoteAddr,  duration.Seconds())
+		log.Infof("Front client request %s from %s proxied for %.2f sec", r.URL.Path, r.RemoteAddr, duration.Seconds())
 	})
 
 	router.PathPrefix("/static/").Handler(http.StripPrefix("/static/",
@@ -240,7 +240,7 @@ func (s *server) handleFrontConnections() error {
 	})
 
 	router.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		http.Redirect(w, r, "https://tty-share.com", http.StatusMovedPermanently)
+		http.Redirect(w, r, s.config.publicURL, http.StatusMovedPermanently)
 	})
 
 	s.httpServer = &http.Server{
