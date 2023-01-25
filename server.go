@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"crypto/rand"
+	_ "embed"
 	"encoding/base64"
 	"encoding/json"
 
@@ -187,20 +188,32 @@ func getSession(s *server, sessionID string) (wrapper *sessionWrapper) {
 	return
 }
 
-func (s *server) serveContent(w http.ResponseWriter, r *http.Request, name string) {
-	file, err := Asset(name)
+var (
+	//go:embed static/404.css
+	_404Css string
+	//go:embed static/404.html
+	_404Html string
+	//go:embed static/bootstrap.min.css
+	bootstrapMinCss string
+	//go:embed static/invalid-session.html
+	invalidSessionHtml string
+)
 
-	if err != nil {
-		w.WriteHeader(http.StatusNotFound)
-		return
+func (s *server) serveContent(w http.ResponseWriter, r *http.Request, name string) {
+	assets := map[string]string{
+		"404.css":              _404Css,
+		"404.html":             _404Html,
+		"bootstrap.min.css":    bootstrapMinCss,
+		"invalid-session.html": invalidSessionHtml,
 	}
 
+	file := assets[name]
 	ctype := mime.TypeByExtension(filepath.Ext(name))
 	if ctype == "" {
-		ctype = http.DetectContentType(file)
+		ctype = http.DetectContentType([]byte(file))
 	}
 	w.Header().Set("Content-Type", ctype)
-	w.Write(file)
+	w.Write([]byte(file))
 }
 
 func (s *server) handleFrontConnections() error {
@@ -220,7 +233,7 @@ func (s *server) handleFrontConnections() error {
 		backConn, err := wrapper.ySession.Open()
 		defer backConn.Close()
 		if err != nil {
-			log.Warnf("Cannot serve session %s for %s, back request error: ", sessionID, r.RemoteAddr, err.Error())
+			log.Warnf("Cannot serve session %s for %s, back request error: %s", sessionID, r.RemoteAddr, err.Error())
 			s.serveContent(w, r, "invalid-session.html")
 			return
 		}
@@ -272,7 +285,7 @@ func (s *server) handleBackConnections() (err error) {
 		err = performHandshake(conn, s.config.publicURL, sessionID)
 
 		if err != nil {
-			log.Warn("Cannot perform handshake on the back connection: %s", err.Error())
+			log.Warnf("Cannot perform handshake on the back connection: %s", err.Error())
 			conn.Close()
 			continue
 
@@ -281,7 +294,7 @@ func (s *server) handleBackConnections() (err error) {
 		ymuxServerSession, err := yamux.Client(conn, nil)
 
 		if err != nil {
-			log.Warn("Cannot create back tunnel: %s", err.Error())
+			log.Warnf("Cannot create back tunnel: %s", err.Error())
 			conn.Close()
 			continue
 		}
