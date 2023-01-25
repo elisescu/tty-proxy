@@ -1,30 +1,16 @@
-# builder image:
-FROM alpine:3.12 as build
-ARG build_deps="go git"
-ARG runtime_deps="dumb-init"
+FROM golang:1.19 AS build-env
+ENV GO111MODULE=on
+WORKDIR /go/src/app
+COPY . .
+RUN mkdir -p /build
+RUN go build -ldflags="-s -w" -o=/build/app .
 
-COPY . /go/src/github.com/elisescu/tty-proxy
-RUN apk update && \
-    apk add -u $build_deps $runtime_deps && \
-    cd /go/src/github.com/elisescu/tty-proxy && \
-    GOPATH=/go go get github.com/go-bindata/go-bindata/... && \
-    GOPATH=/go /go/bin/go-bindata --prefix static -o gobindata.go static/* && \
-    GOPATH=/go go build && \
-    cp tty-proxy /usr/bin/ && \
-    rm -r /go && \
-    apk del $build_deps
+FROM alpine:latest
+# Timezone = Tokyo
+RUN apk --no-cache add tzdata && \
+    cp /usr/share/zoneinfo/Asia/Tokyo /etc/localtime
 
-# runtime image:
-FROM alpine:3.12
-ARG user_id=1000
-RUN adduser -D -H -h / -u $user_id tty-proxy
+COPY --from=build-env /build/app /build/app
+RUN chmod u+x /build/app
 
-EXPOSE 8080
-EXPOSE 3456
-USER tty-proxy
-ENV URL=http://localhost:8080
-
-ENTRYPOINT ["/usr/bin/dumb-init", "--"]
-CMD ["/bin/sh", "-c", "/usr/bin/tty-proxy --front-address :8080 --back-address :3456 -url $URL"]
-
-COPY --from=build /usr/bin/dumb-init /usr/bin/tty-proxy /usr/bin/
+ENTRYPOINT ["/build/app"]
