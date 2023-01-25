@@ -16,6 +16,6 @@ jobs:
     - run: git-semv now
     - uses: docker/login-action@v1
       with:
-        username: ${{ secrets.pyama }}
+        username: pyama
         password: ${{ secrets.DOCKERHUB_TOKEN }}
     - run: make image
