@@ -13,4 +13,4 @@ RUN apk --no-cache add tzdata && \
 COPY --from=build-env /build/app /build/app
 RUN chmod u+x /build/app
 
-ENTRYPOINT ["/build/app"]
+CMD /build/app
