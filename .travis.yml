@@ -1,6 +1,0 @@
-language: go
-
-services:
-      - docker
-
-script:     docker build -t tty-proxy .
