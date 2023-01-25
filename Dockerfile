@@ -18,6 +18,7 @@ ARG user_id=1000
 RUN adduser -D -H -h / -u $user_id tty-proxy
 USER tty-proxy
 
+ENV URL=http://localhost:8080
 EXPOSE 8080
 EXPOSE 3456
 CMD ["/bin/sh", "-c", "/tty-proxy --front-address :8080 --back-address :3456 -url $URL"]
