@@ -252,10 +252,6 @@ func (s *server) handleFrontConnections() error {
 		s.serveContent(w, r, "404.html")
 	})
 
-	router.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		s.serveContent(w, r, "404.html")
-	})
-
 	s.httpServer = &http.Server{
 		Addr:    s.config.frontListenAddress,
 		Handler: router,
