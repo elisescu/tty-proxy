@@ -253,7 +253,7 @@ func (s *server) handleFrontConnections() error {
 	})
 
 	router.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		http.Redirect(w, r, s.config.publicURL, http.StatusMovedPermanently)
+		s.serveContent(w, r, "404.html")
 	})
 
 	s.httpServer = &http.Server{
