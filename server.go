@@ -220,7 +220,7 @@ func (s *server) handleFrontConnections() error {
 	router := mux.NewRouter()
 	router.PathPrefix("/s/{sessionID}/").HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		startTime := time.Now()
-		log.Infof("New front client connection: %s, from %s", r.URL.Path, r.RemoteAddr)
+		log.Infof("New front client connection: %s, from %s user:%s", r.URL.Path, r.RemoteAddr, r.Header.Get("USER"))
 		vars := mux.Vars(r)
 		sessionID := vars["sessionID"]
 		wrapper := getSession(s, sessionID)
