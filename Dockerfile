@@ -17,14 +17,16 @@ RUN apk update && \
 # runtime image:
 FROM alpine:3.12
 ARG user_id=1000
-RUN adduser -D -H -h / -u $user_id tty-proxy
+RUN adduser -D -H -h /home/tty-proxy/ -u $user_id tty-proxy
 
 EXPOSE 8080
 EXPOSE 3456
 USER tty-proxy
 ENV URL=http://localhost:8080
+ENV FRONT_ADDRESS=:9000
+ENV BACK_ADDRESS=:3456
 
 ENTRYPOINT ["/usr/bin/dumb-init", "--"]
-CMD ["/bin/sh", "-c", "/usr/bin/tty-proxy --front-address :8080 --back-address :3456 -url $URL"]
+CMD ["/bin/sh", "-c", "/usr/bin/tty-proxy --front-address $FRONT_ADDRESS --back-address $BACK_ADDRESS -url $URL"]
 
 COPY --from=build /usr/bin/dumb-init /usr/bin/tty-proxy /usr/bin/
