@@ -1,0 +1,4 @@
+your_subdomain: tty.example.com
+ssl:
+ chain: /etc/letsencrypt/live/tty.example.com/fullchain.pem
+ key: /etc/letsencrypt/live/tty.example.com/privkey.pem
